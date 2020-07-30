@@ -1,29 +1,49 @@
 ﻿using UnityEngine.AI;
 using UnityEngine;
 
+using RPG.Combat;
 
-public class Mover : MonoBehaviour
+namespace RPG.Movement
 {
-    private void Update()
+    public class Mover : MonoBehaviour
     {
-        if (Input.GetMouseButton(0))
-            MoveToCursor();
-        UpdateAnimator();
-    }
+        private NavMeshAgent navMeshAgent;
+        private Fighter fighter;
 
-    private void MoveToCursor()
-    {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
-        if (Physics.Raycast(ray, out hit))
-            GetComponent<NavMeshAgent>().destination = hit.point;
-    }
+        public void StartMovementAction(Vector3 destination)
+        {
+            fighter.CancelAttackTarget();
+            MoveTo(destination);
+        }
 
-    private void UpdateAnimator()
-    {
-        Vector3 velocity = GetComponent<NavMeshAgent>().velocity;
-        Vector3 localVelocity = transform.InverseTransformDirection(velocity);
-        float speed = localVelocity.z;
-        GetComponent<Animator>().SetFloat("ForwardSpeed", speed);
+        public void MoveTo(Vector3 destination)
+        {
+            navMeshAgent.isStopped = false;
+            navMeshAgent.destination = destination;
+        }
+
+        public void Stop()
+        {
+            navMeshAgent.isStopped = true;
+        }
+
+        private void Start()
+        {
+            navMeshAgent = GetComponent<NavMeshAgent>();
+            fighter = GetComponent<Fighter>();
+        }
+
+        private void Update()
+        {
+            UpdateAnimator();
+        }
+
+        private void UpdateAnimator()
+        {
+            Vector3 velocity = GetComponent<NavMeshAgent>().velocity;
+            Vector3 localVelocity = transform.InverseTransformDirection(velocity);
+            float speed = localVelocity.z;
+            GetComponent<Animator>().SetFloat("ForwardSpeed", speed);
+        }
     }
 }

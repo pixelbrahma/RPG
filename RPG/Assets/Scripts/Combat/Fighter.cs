@@ -15,6 +15,23 @@ namespace RPG.Combat
 
         private Mover mover;
 
+        private void Start()
+        {
+            mover = GetComponent<Mover>();
+        }
+
+        private void Update()
+        {
+            if (target == null) return;
+            if (GetTargetDistance() >= weaponRange)
+                mover.MoveTo(target.position);
+            else
+            {
+                mover.Cancel();
+                AttackBehaviour();
+            }
+        }
+
         public void Attack(CombatTarget combatTarget)
         {
             GetComponent<ActionScheduler>().StartAction(this);
@@ -26,20 +43,15 @@ namespace RPG.Combat
             target = null;
         }
 
-        private void Start()
+        // Animation Event
+        public void Hit()
         {
-            mover = GetComponent<Mover>();
-        }
 
-        private void Update()
+        }
+        
+        private void AttackBehaviour()
         {
-            if (target == null) return;
-            if (GetTargetDistance() >= weaponRange)
-            {
-                mover.MoveTo(target.position);
-            }
-            else
-                mover.Cancel();
+            GetComponent<Animator>().SetTrigger("Attack");
         }
 
         private float GetTargetDistance()

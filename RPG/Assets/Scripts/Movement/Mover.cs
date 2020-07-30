@@ -8,6 +8,16 @@ namespace RPG.Movement
     public class Mover : MonoBehaviour, IAction
     {
         private NavMeshAgent navMeshAgent;
+        
+        private void Start()
+        {
+            navMeshAgent = GetComponent<NavMeshAgent>();
+        }
+
+        private void Update()
+        {
+            UpdateAnimator();
+        }
 
         public void StartMovementAction(Vector3 destination)
         {
@@ -25,17 +35,7 @@ namespace RPG.Movement
         {
             navMeshAgent.isStopped = true;
         }
-
-        private void Start()
-        {
-            navMeshAgent = GetComponent<NavMeshAgent>();
-        }
-
-        private void Update()
-        {
-            UpdateAnimator();
-        }
-
+        
         private void UpdateAnimator()
         {
             Vector3 velocity = GetComponent<NavMeshAgent>().velocity;

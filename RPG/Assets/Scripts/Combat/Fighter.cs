@@ -3,23 +3,25 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using RPG.Movement;
+using RPG.Core;
 
 namespace RPG.Combat
 {
-    public class Fighter : MonoBehaviour
+    public class Fighter : MonoBehaviour, IAction
     {
         [SerializeField] private float weaponRange = 2f;
 
-        public  Transform target;
+        private Transform target;
 
         private Mover mover;
 
         public void Attack(CombatTarget combatTarget)
         {
+            GetComponent<ActionScheduler>().StartAction(this);
             target = combatTarget.transform;
         }
-
-        public void CancelAttackTarget()
+        
+        public void Cancel()
         {
             target = null;
         }
@@ -33,9 +35,11 @@ namespace RPG.Combat
         {
             if (target == null) return;
             if (GetTargetDistance() >= weaponRange)
+            {
                 mover.MoveTo(target.position);
+            }
             else
-                mover.Stop();
+                mover.Cancel();
         }
 
         private float GetTargetDistance()

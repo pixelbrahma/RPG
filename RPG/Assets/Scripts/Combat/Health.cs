@@ -8,10 +8,22 @@ namespace RPG.Combat
     {
         [SerializeField] private float health = 100f;
 
+        public bool isDead { get; private set; } = false;
+
         public void TakeDamage(float damage)
         {
             health = Mathf.Max(health - damage, 0);
-            Debug.Log("Health : " + health);
+            if (health == 0)
+                Die();
+        }
+
+        private void Die()
+        {
+            if (!isDead)
+            {
+                isDead = true;
+                GetComponent<Animator>().SetTrigger("Die");
+            }
         }
     }
 }

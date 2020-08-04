@@ -44,6 +44,7 @@ namespace RPG.Combat
         
         public void Cancel()
         {
+            GetComponent<Animator>().SetTrigger("CancelAttack");
             target = null;
         }
 
@@ -55,11 +56,12 @@ namespace RPG.Combat
 
         private void AttackBehaviour()
         {
-            if (timeSinceLastAttack > timeBetweenAttacks)
-            {
-                GetComponent<Animator>().SetTrigger("Attack");
-                timeSinceLastAttack = 0;
-            }
+            if (!target.GetComponent<Health>().isDead)
+                if (timeSinceLastAttack > timeBetweenAttacks)
+                {
+                    GetComponent<Animator>().SetTrigger("Attack");
+                    timeSinceLastAttack = 0;
+                }
         }
 
         private float GetTargetDistance()

@@ -16,16 +16,20 @@ namespace RPG.Combat
         private Transform target;
         private float timeSinceLastAttack;
         private Mover mover;
+        private Animator animator;
 
         private void Start()
         {
             mover = GetComponent<Mover>();
+            animator = GetComponent<Animator>();
         }
 
         private void Update()
         {
             timeSinceLastAttack += Time.deltaTime;
+
             if (target == null) return;
+
             if (GetTargetDistance() >= weaponRange)
                 mover.MoveTo(target.position);
             else
@@ -33,6 +37,12 @@ namespace RPG.Combat
                 mover.Cancel();
                 AttackBehaviour();
             }
+        }
+
+        public bool CanAttack(CombatTarget combatTarget)
+        {
+            if (combatTarget == null) return false;
+            return (combatTarget.GetComponent<Health>() != null && !combatTarget.GetComponent<Health>().isDead);
         }
 
         public void Attack(CombatTarget combatTarget)
@@ -44,24 +54,33 @@ namespace RPG.Combat
         
         public void Cancel()
         {
-            GetComponent<Animator>().SetTrigger("CancelAttack");
+            ManageAnimatorTriggerCalls("Attack", "CancelAttack");
             target = null;
         }
 
         // Animation Event
         public void Hit()
         {
+            if (!target || !target.GetComponent<Health>()) return;
             target.GetComponent<Health>().TakeDamage(weaponDamage);
         }
 
         private void AttackBehaviour()
         {
+            transform.LookAt(target);
+
             if (!target.GetComponent<Health>().isDead)
                 if (timeSinceLastAttack > timeBetweenAttacks)
                 {
-                    GetComponent<Animator>().SetTrigger("Attack");
+                    ManageAnimatorTriggerCalls("CancelAttack", "Attack");
                     timeSinceLastAttack = 0;
                 }
+        }
+
+        private void ManageAnimatorTriggerCalls(string triggerToReset, string triggerToSet)
+        {
+            animator.ResetTrigger(triggerToReset);
+            animator.SetTrigger(triggerToSet);
         }
 
         private float GetTargetDistance()

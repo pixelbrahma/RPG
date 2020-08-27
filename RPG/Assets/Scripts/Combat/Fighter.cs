@@ -39,17 +39,17 @@ namespace RPG.Combat
             }
         }
 
-        public bool CanAttack(CombatTarget combatTarget)
+        public bool CanAttack(GameObject target)
         {
-            if (combatTarget == null) return false;
-            return (combatTarget.GetComponent<Health>() != null && !combatTarget.GetComponent<Health>().isDead);
+            if (target == null) return false;
+            return (target.GetComponent<Health>() != null && !target.GetComponent<Health>().isDead);
         }
 
-        public void Attack(CombatTarget combatTarget)
+        public void Attack(GameObject target)
         {
             // Triggers Hit() Event
             GetComponent<ActionScheduler>().StartAction(this);
-            target = combatTarget.transform;
+            this.target = target.transform;
         }
         
         public void Cancel()
